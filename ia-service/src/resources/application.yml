@@ -1,0 +1,7 @@
+spring:
+  application:
+    # Nome do serviço, para que ele saiba qual arquivo buscar no Config Server
+    name: ia-service
+  config:
+    # Endereço do seu Config Server
+    import: "configserver:http://localhost:8888"

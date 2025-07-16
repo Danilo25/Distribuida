@@ -1,0 +1,13 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: spring.cloud.config.server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Danilo25/trabalho-distribuida-config.git
+          username: Danilo25
+          password: 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

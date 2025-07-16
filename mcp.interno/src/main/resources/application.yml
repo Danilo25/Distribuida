@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: MCP-INTERNO
+  config:
+    import: configserver:http://localhost:8888
