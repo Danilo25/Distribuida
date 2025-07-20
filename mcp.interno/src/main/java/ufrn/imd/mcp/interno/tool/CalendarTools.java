@@ -6,9 +6,13 @@ import org.springframework.stereotype.Component;
 import ufrn.imd.mcp.interno.model.CalendarEvent;
 import ufrn.imd.mcp.interno.repository.EventRepository;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class CalendarTools {

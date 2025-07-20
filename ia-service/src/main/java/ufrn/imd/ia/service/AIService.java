@@ -1,7 +1,11 @@
 package ufrn.imd.ia.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.retry.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +16,6 @@ public class AIService {
     public AIService(ChatClient chatClient) {
         this.chatClient = chatClient;
     }
-
     public String conversarComIa(String textoDoUsuario, String conversationId) {
         return chatClient.prompt()
                 .system(systemSpec -> systemSpec.text(
