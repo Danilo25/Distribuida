@@ -5,8 +5,12 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.retry.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 
 @Service
 public class AIService {
@@ -16,6 +20,11 @@ public class AIService {
     public AIService(ChatClient chatClient) {
         this.chatClient = chatClient;
     }
+
+    @CircuitBreaker(name = "iaServiceCircuitBreaker", fallbackMethod = "fallbackConversarComIa")
+    @Retry(name = "iaServiceCircuitBreaker")
+    @Bulkhead(name = "iaServiceCircuitBreaker")
+    @RateLimiter(name = "iaServiceCircuitBreaker")
     public String conversarComIa(String textoDoUsuario, String conversationId) {
         return chatClient.prompt()
                 .system(systemSpec -> systemSpec.text(
@@ -27,5 +36,9 @@ public class AIService {
                 .user(textoDoUsuario)
                 .call()
                 .content();
+    }
+
+    public String fallbackConversarComIa(String textoDoUsuario, String conversationId, Throwable throwable) {
+        return "O serviço de inteligência artificial está temporariamente indisponível. Por favor, tente novamente mais tarde.";
     }
 }
