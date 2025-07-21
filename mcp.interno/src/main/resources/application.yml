@@ -3,3 +3,9 @@ spring:
     name: MCP-INTERNO
   config:
     import: configserver:http://localhost:8888
+
+management:
+  endpoint:
+    web:
+      exposure:
+        include: "refresh"

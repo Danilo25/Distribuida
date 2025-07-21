@@ -5,9 +5,3 @@ spring:
   config:
     # Endereço do seu Config Server
     import: "configserver:http://localhost:8888"
-
-management:
-  endpoint:
-    web:
-      exposure:
-        include: "refresh"

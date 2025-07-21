@@ -4,6 +4,12 @@ spring:
   config:
     import: configserver:http://localhost:8888
 
+management:
+  endpoint:
+    web:
+      exposure:
+        include: "refresh"
+        
 logging:
   level:
     org.springframework.cloud.gateway: TRACE

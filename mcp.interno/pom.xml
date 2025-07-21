@@ -30,6 +30,7 @@
 		<java.version>24</java.version>
 		<spring-ai.version>1.0.0</spring-ai.version>
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
+		<resilience4j.version>2.3.0</resilience4j.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -50,9 +51,9 @@
 		</dependency>
 
 		<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-webflux</artifactId>
-</dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-actuator</artifactId>
@@ -64,6 +65,16 @@
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-tracing-bridge-otel</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>io.opentelemetry</groupId>
+    <artifactId>opentelemetry-exporter-zipkin</artifactId>
 </dependency>
 
 		<dependency>
