@@ -26,17 +26,17 @@ public class AIService {
     @Bulkhead(name = "iaServiceCircuitBreaker")
     @RateLimiter(name = "iaServiceCircuitBreaker")
     public String conversarComIa(String textoDoUsuario, String conversationId) {
-        return chatClient.prompt()
-                .system(systemSpec -> systemSpec.text(
-                        "Você é um assistente de calendário. Sua função é ajudar os usuários a criar e listar eventos. " +
-                        "Sempre utilize as ferramentas disponíveis ('criarEventoCalendario', 'listarEventosCalendario') para realizar as tarefas. " +
-                        "Seja claro e confirme as ações com o usuário. Não invente informações."
-                ))
-                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
-                .user(textoDoUsuario)
-                .call()
-                .content();
-    }
+    return chatClient.prompt()
+            .system(systemSpec -> systemSpec.text(
+                "Você é um assistente de calendário. Sua função é ajudar os usuários a criar e listar eventos. " +
+                "Use a ferramenta 'sugerirPlanejamentoParaEvento' para ajudar os usuários a se organizarem para um evento futuro. " +
+                "Sempre que um evento for criado, ofereça um plano para ele."
+            ))
+            .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId))
+            .user(textoDoUsuario)
+            .call()
+            .content();
+}
 
     public String fallbackConversarComIa(String textoDoUsuario, String conversationId, Throwable throwable) {
         return "O serviço de inteligência artificial está temporariamente indisponível. Por favor, tente novamente mais tarde.";

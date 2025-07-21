@@ -3,52 +3,47 @@ package ufrn.imd.mcp.interno.tool;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
-import ufrn.imd.mcp.interno.model.CalendarEvent;
-import ufrn.imd.mcp.interno.repository.EventRepository;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class CalendarTools {
 
-    private final EventRepository eventRepository;
-
-    public CalendarTools(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-    }
-
+    public CalendarTools() {}
     @Tool(
-            name = "criarEventoCalendario",
-            description = "Cria um novo evento no calendário. Requer título, descrição, data e hora de início e fim."
+            name = "sugerirPlanejamentoParaEvento",
+            description = "Com base na data de um evento, sugere um plano de tarefas ou lembretes. A data deve estar no formato AAAA-MM-DD."
     )
-    public Map<String, Object> criarEvento(
-            @ToolParam(description = "Título do evento") String title,
-            @ToolParam(description = "Descrição detalhada do evento") String description,
-            @ToolParam(description = "Data e hora de início (formato ISO, ex: 2024-07-17T10:00:00)") String startTime,
-            @ToolParam(description = "Data e hora de fim (formato ISO, ex: 2024-07-17T11:00:00)") String endTime
+    public Map<String, String> sugerirPlanejamento(
+            @ToolParam(description = "A data final do evento no formato AAAA-MM-DD") String dataEvento
     ) {
         try {
-            LocalDateTime start = LocalDateTime.parse(startTime);
-            LocalDateTime end = LocalDateTime.parse(endTime);
-            CalendarEvent newEvent = new CalendarEvent(title, description, start, end);
-            eventRepository.save(newEvent);
-            return Map.of("status", "Evento criado com sucesso!", "evento", newEvent);
-        } catch (Exception e) {
-            return Map.of("status", "Falha ao criar evento", "erro", e.getMessage());
-        }
-    }
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+            LocalDate eventDate = LocalDate.parse(dataEvento, formatter);
+            LocalDate today = LocalDate.now(); // Pega a data atual do sistema
 
-    @Tool(
-            name = "listarEventosCalendario",
-            description = "Lista todos os eventos do calendário."
-    )
-    public List<CalendarEvent> listarEventos() {
-        return eventRepository.findAll();
+            long daysUntilEvent = ChronoUnit.DAYS.between(today, eventDate);
+
+            if (daysUntilEvent < 0) {
+                return Map.of("status", "Planejamento não aplicável", "sugestao", "Este evento já ocorreu.");
+            }
+
+            String sugestao = String.format(
+                    "Faltam %d dias para o seu evento! Aqui está um plano simples: " +
+                    "1. Daqui a %d dias: Comece a planejar os detalhes. " +
+                    "2. Faltando 7 dias: Confirme os preparativos. " +
+                    "3. Faltando 1 dia: Lembrete final!",
+                    daysUntilEvent,
+                    daysUntilEvent / 2
+            );
+
+            return Map.of("status", "Planejamento sugerido", "sugestao", sugestao);
+
+        } catch (Exception e) {
+            return Map.of("status", "Erro ao gerar planejamento", "erro", "Formato de data inválido. Use AAAA-MM-DD.");
+        }
     }
 }
